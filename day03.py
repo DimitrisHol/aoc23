@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import reduce
 
 specialCharacters = set(['#', '%', '/', '-', '&', '@', '$', '*', '+', '='])
 totalSum = 0 
@@ -98,3 +99,48 @@ for i in range(1, len(twodimensions)-1) :
                                 if value[2] == groupingIterator : 
                                     value[1] = True 
 print(f"Part 1: {totalSum}")
+
+
+## Reset the visits for part 2
+for value in searchMap.values() : 
+    value[1] = False 
+
+part2 = 0 
+for i in range(1, len(twodimensions)-1) : 
+    for j in range(1, len(twodimensions[i])-1) : 
+
+        if twodimensions[i][j] == "*" : 
+
+            numbersToMultiply = []
+
+            # Loop through adjacent tiles (distance = 1) : 
+            for k in [i-1, i , i +1] : 
+                for n in [j -1, j, j+1] : 
+
+                    if twodimensions[k][n].isnumeric() : 
+                        coordinates = f"{k},{n}"
+
+                        # Retrieve the visit value
+                        if not searchMap[coordinates][1] : 
+
+                            # Store the numbers that need to be multiplied
+                            numbersToMultiply.append(searchMap[coordinates][0]) 
+
+                            # Set the visit to true
+                            searchMap[coordinates][1] = True
+                            
+                            # fetch out the group
+                            groupingIterator = searchMap[coordinates][2]
+                                
+                            # Set all same group visits to true
+
+                            for value in searchMap.values() : 
+                                if value[2] == groupingIterator : 
+                                    value[1] = True 
+
+            if len(numbersToMultiply) > 1 : 
+                product = reduce(lambda a, b : a *b, numbersToMultiply)
+
+                part2 += product
+
+print(f"Part 2: {part2}")
